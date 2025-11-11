@@ -6,7 +6,7 @@
 /*   By: abroslav <abroslav@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 01:59:49 by abroslav          #+#    #+#             */
-/*   Updated: 2025/11/11 14:48:44 by abroslav         ###   ########.fr       */
+/*   Updated: 2025/11/11 17:21:27 by abroslav         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,14 @@ void	setup_client_signals(void)
 
 void	send_message(pid_t server_pid, char *msg)
 {
-	int	i;
+	struct timeval	start;
+	struct timeval	end;
+	long			seconds;
+	long			microseconds;
+	long			total_time;
+	int				i;
 
+	gettimeofday(&start, NULL);
 	i = 0;
 	while (msg[i])
 	{
@@ -59,7 +65,14 @@ void	send_message(pid_t server_pid, char *msg)
 	send_char(server_pid, '\0');
 	while (!g_ack_received)
 		pause();
-	ft_printf("Mensage delivered!\n");
+
+	gettimeofday(&end, NULL);
+	seconds = end.tv_sec - start.tv_sec;
+	microseconds = end.tv_usec - start.tv_usec;
+	total_time = seconds * 1000 + microseconds / 1000;
+
+	ft_printf("Mensage delivered! Time: %u ms (%u bytes)\n", \
+	(unsigned int)total_time, (unsigned int)i);
 }
 
 int	main(int ac, char **av)
