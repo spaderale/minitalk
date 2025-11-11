@@ -1,16 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abroslav <abroslav@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/10 02:07:05 by abroslav          #+#    #+#             */
-/*   Updated: 2025/11/11 17:03:57 by abroslav         ###   ########.fr       */
+/*   Created: 2025/11/11 01:59:49 by abroslav          #+#    #+#             */
+/*   Updated: 2025/11/11 14:48:44 by abroslav         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minitalk.h"
+#include "minitalk_bonus.h"
+
+static int	g_ack_received = 0;
+
+void	handle_ack(int sig)
+{
+	(void)sig;
+	g_ack_received = 1;
+}
 
 void	send_char(pid_t pid, unsigned char c)
 {
@@ -23,16 +31,41 @@ void	send_char(pid_t pid, unsigned char c)
 			kill(pid, SIGUSR1);
 		else
 			kill(pid, SIGUSR2);
-		usleep(100);
+		usleep(1000);
 		bit--;
 	}
+}
+
+void	setup_client_signals(void)
+{
+	struct sigaction	sa;
+
+	sa.sa_handler = &handle_ack;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGUSR1, &sa, NULL);
+}
+
+void	send_message(pid_t server_pid, char *msg)
+{
+	int	i;
+
+	i = 0;
+	while (msg[i])
+	{
+		send_char(server_pid, msg[i]);
+		i++;
+	}
+	send_char(server_pid, '\0');
+	while (!g_ack_received)
+		pause();
+	ft_printf("Mensage delivered!\n");
 }
 
 int	main(int ac, char **av)
 {
 	pid_t	server_pid;
-	char	*str;
-	int		i;
+	char	*msg;
 
 	if (ac != 3)
 	{
@@ -40,12 +73,8 @@ int	main(int ac, char **av)
 		return (1);
 	}
 	server_pid = ft_atoi(av[1]);
-	str = av[2];
-	i = 0;
-	while (str[i])
-	{
-		send_char(server_pid, str[i]);
-		i++;
-	}
+	msg = av[2];
+	setup_client_signals();
+	send_message(server_pid, msg);
 	return (0);
 }
