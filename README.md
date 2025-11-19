@@ -127,6 +127,5 @@ Importância de pequenos delays (usleep) para confiabilidade.
 
 Alexandre Broslavetz Spader\
 📍 42 Porto — Common Core\
-📬 github.com/spaderale/minitalk
 
 “Aprender a fazer dois processos conversarem foi o primeiro passo para entender como os sistemas realmente se comunicam.” 💬
