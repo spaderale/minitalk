@@ -211,10 +211,10 @@ Testes com UTF-8 e emojis.
 
 Importância de pequenos delays (usleep) para confiabilidade.
 
+---
 🧑‍💻 Autor
-
+---
 Alexandre Broslavetz Spader\
-📍 42 Porto — Common Core\
-📬 github.com/spaderale/minitalk
+📍 42 Porto — Common Core
 
 “Aprender a fazer dois processos conversarem foi o primeiro passo para entender como os sistemas realmente se comunicam.” 💬
